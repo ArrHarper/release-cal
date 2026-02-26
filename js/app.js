@@ -87,7 +87,7 @@
     }
 
     if (categoryKey === "on_the_horizon") {
-      return { text: "Upcoming ⏭️", className: "upcoming-badge" };
+      return { text: "Upcoming 🌅", className: "upcoming-badge" };
     }
 
     const expected = row.expected_date;
@@ -96,7 +96,7 @@
     if (!CURRENT_WEEK_START_ISO || !NEXT_WEEK_START_ISO) return null;
 
     if (expected < CURRENT_WEEK_START_ISO) {
-      return { text: "Delayed ⚠️", className: "delayed-badge" };
+      return { text: "Delayed ⏱️", className: "delayed-badge" };
     }
 
     if (expected < NEXT_WEEK_START_ISO) {

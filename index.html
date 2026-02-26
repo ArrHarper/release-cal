@@ -1,88 +1,76 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-    <title>Release Tracker</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Public+Sans:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body>
-    <div class="page-shell">
-      <header class="page-header">
-        <p class="eyebrow">Wistia Weekly Product Update</p>
-        <h1>Release Tracker</h1>
-        <p id="last-updated" class="last-updated">Loading latest release feed...</p>
-      </header>
 
-      <nav class="tabs" aria-label="Release categories">
-        <button
-          id="now-live"
-          class="tab is-active"
-          data-tab="now-live"
-          aria-controls="panel-now-live"
-          aria-selected="true"
-        >
-          Now Live
-        </button>
-        <button
-          id="coming-soon"
-          class="tab"
-          data-tab="coming-soon"
-          aria-controls="panel-coming-soon"
-          aria-selected="false"
-        >
-          Coming Soon
-        </button>
-        <button
-          id="on-the-horizon"
-          class="tab"
-          data-tab="on-the-horizon"
-          aria-controls="panel-on-the-horizon"
-          aria-selected="false"
-        >
-          On the Horizon
-        </button>
-      </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <title>Release Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Public+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
 
-      <main>
-        <section class="status status-loading" id="loading-state" aria-live="polite">
-          Fetching release updates...
-        </section>
-        <section class="status status-error is-hidden" id="error-state" aria-live="assertive"></section>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">Wistia Weekly Product Update</p>
+      <h1>Release Tracker</h1>
+      <p id="last-updated" class="last-updated">Loading latest release feed...</p>
+    </header>
 
-        <section id="panel-now-live" class="tab-panel is-active" role="tabpanel" aria-labelledby="now-live">
-          <div class="panel-heading panel-heading-live">
-            <h2>Now Live</h2>
-          </div>
-          <div class="cards" id="cards-now-live"></div>
-        </section>
+    <nav class="tabs" aria-label="Release categories">
+      <button id="now-live" class="tab is-active" data-tab="now-live" aria-controls="panel-now-live"
+        aria-selected="true">
+        Now Live
+      </button>
+      <button id="coming-soon" class="tab" data-tab="coming-soon" aria-controls="panel-coming-soon"
+        aria-selected="false">
+        Coming Soon
+      </button>
+      <button id="on-the-horizon" class="tab" data-tab="on-the-horizon" aria-controls="panel-on-the-horizon"
+        aria-selected="false">
+        On the Horizon
+      </button>
+    </nav>
 
-        <section id="panel-coming-soon" class="tab-panel" role="tabpanel" aria-labelledby="coming-soon">
-          <div class="panel-heading panel-heading-soon">
-            <h2>Coming Soon</h2>
-            <p class="panel-heading-caption">Next 1-2 weeks</p>
-          </div>
-          <div class="cards" id="cards-coming-soon"></div>
-        </section>
+    <main>
+      <section class="status status-loading" id="loading-state" aria-live="polite">
+        Fetching release updates...
+      </section>
+      <section class="status status-error is-hidden" id="error-state" aria-live="assertive"></section>
 
-        <section id="panel-on-the-horizon" class="tab-panel" role="tabpanel" aria-labelledby="on-the-horizon">
-          <div class="panel-heading panel-heading-horizon">
-            <h2>On the Horizon</h2>
-            <p class="panel-heading-caption">2+ weeks away</p>
-          </div>
-          <div class="cards" id="cards-on-the-horizon"></div>
-        </section>
-      </main>
-    </div>
+      <section id="panel-now-live" class="tab-panel is-active" role="tabpanel" aria-labelledby="now-live">
+        <div class="panel-heading panel-heading-live">
+          <h2>Now Live</h2>
+          <p class="panel-heading-caption">Shipped to customers</p>
+        </div>
+        <div class="cards" id="cards-now-live"></div>
+      </section>
 
-    <script src="js/config.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+      <section id="panel-coming-soon" class="tab-panel" role="tabpanel" aria-labelledby="coming-soon">
+        <div class="panel-heading panel-heading-soon">
+          <h2>Coming Soon</h2>
+          <p class="panel-heading-caption">Next 1-2 weeks</p>
+        </div>
+        <div class="cards" id="cards-coming-soon"></div>
+      </section>
+
+      <section id="panel-on-the-horizon" class="tab-panel" role="tabpanel" aria-labelledby="on-the-horizon">
+        <div class="panel-heading panel-heading-horizon">
+          <h2>On the Horizon</h2>
+          <p class="panel-heading-caption">2+ weeks away</p>
+        </div>
+        <div class="cards" id="cards-on-the-horizon"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
 </html>
