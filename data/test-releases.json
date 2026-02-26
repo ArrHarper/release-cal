@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-02-26T10:55:00-05:00",
+  "timezone": "America/New_York",
+  "now_live": [
+    {
+      "release_id": "rel_1001",
+      "title": "Project Atlas Dashboard Refresh",
+      "plans": "Starter, Growth",
+      "description": "Introduces a cleaner summary panel with status tiles and simplified trend charts for weekly check-ins.",
+      "slack_channel": "#team-atlas",
+      "feature_brief_url": "https://example.com/briefs/atlas-dashboard",
+      "expected_date": "2026-02-24",
+      "has_shipped": true
+    },
+    {
+      "release_id": "rel_1002",
+      "title": "Nova Composer Quick Preview",
+      "plans": "All plans",
+      "description": "Adds temporary preview acceleration controls so teams can review long drafts more quickly.",
+      "slack_channel": "#team-nova",
+      "feature_brief_url": null,
+      "expected_date": "2026-02-25",
+      "has_shipped": true
+    }
+  ],
+  "coming_soon": [
+    {
+      "release_id": "rel_2002",
+      "title": "Orion Feedback Threads",
+      "plans": "Growth, Scale",
+      "description": "Lets participants create threaded follow-ups with optional anonymous mode for broader participation.",
+      "slack_channel": "#team-orion",
+      "feature_brief_url": "https://example.com/briefs/orion-feedback",
+      "expected_date": "2026-03-04",
+      "has_shipped": false
+    },
+    {
+      "release_id": "rel_2001",
+      "title": "Polaris Embedded Intake Refresh",
+      "plans": null,
+      "description": null,
+      "slack_channel": null,
+      "feature_brief_url": null,
+      "expected_date": "2026-03-01",
+      "has_shipped": false
+    }
+  ],
+  "on_the_horizon": [
+    {
+      "release_id": "rel_3002",
+      "title": "Kepler Visual Layer Controls",
+      "plans": "All plans",
+      "description": "Adds configurable visual layers with timing and placement controls for richer presentation scenes.",
+      "slack_channel": "#team-kepler",
+      "feature_brief_url": "https://example.com/briefs/kepler-layers",
+      "expected_date": "2026-03-09",
+      "has_shipped": false
+    },
+    {
+      "release_id": "rel_3001",
+      "title": "Drift Initiative Placeholder",
+      "plans": "Enterprise",
+      "description": "Synthetic null-date release used to validate fallback rendering and sort behavior in the UI.",
+      "slack_channel": "#team-drift",
+      "feature_brief_url": null,
+      "expected_date": null,
+      "has_shipped": false
+    }
+  ]
+}
