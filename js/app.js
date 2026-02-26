@@ -30,10 +30,15 @@
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
-  function sortByExpectedDateAsc(items) {
+  function getDateFieldByCategory(categoryKey) {
+    return categoryKey === "now_live" ? "shipped_at" : "expected_date";
+  }
+
+  function sortByCategoryDateAsc(items, categoryKey) {
+    const dateField = getDateFieldByCategory(categoryKey);
     return [...items].sort((a, b) => {
-      const aDate = parseIsoDate(a.expected_date);
-      const bDate = parseIsoDate(b.expected_date);
+      const aDate = parseIsoDate(a[dateField]);
+      const bDate = parseIsoDate(b[dateField]);
       if (!aDate && !bDate) return 0;
       if (!aDate) return 1;
       if (!bDate) return -1;
@@ -41,7 +46,7 @@
     });
   }
 
-  function formatExpectedDate(isoDate) {
+  function formatDateLabel(isoDate) {
     const date = parseIsoDate(isoDate);
     if (!date) return PLACEHOLDERS.date;
     return date.toLocaleDateString("en-US", {
@@ -77,7 +82,7 @@
 
   function normalizeList(data, key) {
     const list = Array.isArray(data[key]) ? data[key] : [];
-    return sortByExpectedDateAsc(list);
+    return sortByCategoryDateAsc(list, key);
   }
 
   function clearContainer(id) {
@@ -93,14 +98,58 @@
     container.appendChild(empty);
   }
 
-  function renderCards(containerId, rows) {
+  function getWeekStart(date) {
+    const weekStart = new Date(date);
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    return weekStart;
+  }
+
+  function formatWeekHeader(date) {
+    const weekStart = getWeekStart(date);
+    return "Week of " + weekStart.toLocaleDateString("en-US", {
+      timeZone: "America/New_York",
+      month: "numeric",
+      day: "numeric"
+    });
+  }
+
+  function getCardDate(row, categoryKey) {
+    if (categoryKey === "now_live") {
+      return row.shipped_at || row.expected_date || null;
+    }
+    return row.expected_date || null;
+  }
+
+  function appendWeekHeader(container, label) {
+    const divider = document.createElement("div");
+    divider.className = "week-divider";
+
+    const text = document.createElement("span");
+    text.className = "week-divider-text";
+    text.textContent = label;
+    divider.appendChild(text);
+    container.appendChild(divider);
+  }
+
+  function renderCards(containerId, rows, categoryKey) {
     const container = clearContainer(containerId);
     if (rows.length === 0) {
       renderEmpty(container);
       return;
     }
 
+    let activeWeekLabel = null;
+
     rows.forEach((row) => {
+      const dateValue = getCardDate(row, categoryKey);
+      const parsedDate = parseIsoDate(dateValue);
+      const weekLabel = parsedDate ? formatWeekHeader(parsedDate) : "Date TBD";
+      if (weekLabel !== activeWeekLabel) {
+        appendWeekHeader(container, weekLabel);
+        activeWeekLabel = weekLabel;
+      }
+
       const card = document.createElement("article");
       card.className = "card";
 
@@ -115,7 +164,19 @@
       channel.className = "channel";
       channel.textContent = row.slack_channel || PLACEHOLDERS.channel;
 
-      header.append(title, channel);
+      header.append(title);
+
+      const headerRight = document.createElement("div");
+      headerRight.className = "header-right";
+      if (categoryKey === "now_live") {
+        const shippedBadge = document.createElement("span");
+        shippedBadge.className = "shipped-badge";
+        shippedBadge.textContent = "Shipped 🚀";
+        headerRight.appendChild(shippedBadge);
+      }
+      headerRight.appendChild(channel);
+
+      header.appendChild(headerRight);
 
       const metaRow = document.createElement("div");
       metaRow.className = "meta-row";
@@ -126,7 +187,8 @@
 
       const date = document.createElement("span");
       date.className = "meta-date";
-      date.textContent = "Expected: " + formatExpectedDate(row.expected_date);
+      const datePrefix = categoryKey === "now_live" ? "Shipped: " : "Expected: ";
+      date.textContent = datePrefix + formatDateLabel(dateValue);
 
       metaRow.append(plans, date);
 
@@ -229,9 +291,9 @@
       const comingSoon = normalizeList(payload, "coming_soon");
       const onTheHorizon = normalizeList(payload, "on_the_horizon");
 
-      renderCards("cards-now-live", nowLive);
-      renderCards("cards-coming-soon", comingSoon);
-      renderCards("cards-on-the-horizon", onTheHorizon);
+      renderCards("cards-now-live", nowLive, "now_live");
+      renderCards("cards-coming-soon", comingSoon, "coming_soon");
+      renderCards("cards-on-the-horizon", onTheHorizon, "on_the_horizon");
 
       const sourceLabel = sourceConfig.kind === "mock" ? "mock data" : "api";
       const generatedAt = payload.generated_at
