@@ -34,15 +34,16 @@
     return categoryKey === "now_live" ? "shipped_at" : "expected_date";
   }
 
-  function sortByCategoryDateAsc(items, categoryKey) {
+  function sortByCategoryDate(items, categoryKey) {
     const dateField = getDateFieldByCategory(categoryKey);
+    const isDescending = categoryKey === "now_live";
     return [...items].sort((a, b) => {
       const aDate = parseIsoDate(a[dateField]);
       const bDate = parseIsoDate(b[dateField]);
       if (!aDate && !bDate) return 0;
       if (!aDate) return 1;
       if (!bDate) return -1;
-      return aDate - bDate;
+      return isDescending ? bDate - aDate : aDate - bDate;
     });
   }
 
@@ -82,7 +83,7 @@
 
   function normalizeList(data, key) {
     const list = Array.isArray(data[key]) ? data[key] : [];
-    return sortByCategoryDateAsc(list, key);
+    return sortByCategoryDate(list, key);
   }
 
   function clearContainer(id) {
