@@ -155,6 +155,14 @@ h1 {
   font-size: 1.12rem;
 }
 
+.panel-heading-caption {
+  color: rgba(248, 252, 255, 0.88);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0.18rem 0 0;
+}
+
 .panel-heading-live {
   background: linear-gradient(120deg, var(--live-1), var(--live-2));
 }
@@ -183,7 +191,7 @@ h1 {
   align-items: center;
   display: flex;
   gap: 0.6rem;
-  margin-top: 0.2rem;
+  margin-top: 0.6rem;
 }
 
 .week-divider::after {
@@ -195,7 +203,7 @@ h1 {
 
 .week-divider-text {
   color: #4c636f;
-  font-size: 0.77rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -239,6 +247,30 @@ h1 {
   letter-spacing: 0.01em;
   padding: 0.2rem 0.52rem;
   white-space: nowrap;
+}
+
+.this-week-badge,
+.delayed-badge,
+.upcoming-badge {
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 0.2rem 0.52rem;
+  white-space: nowrap;
+}
+
+.this-week-badge {
+  background: linear-gradient(130deg, #19766f, #2ea8a0);
+}
+
+.delayed-badge {
+  background: linear-gradient(130deg, #bf3d2e, #ef7e56);
+}
+
+.upcoming-badge {
+  background: linear-gradient(130deg, #415fa8, #6fa0f4);
 }
 
 .channel {

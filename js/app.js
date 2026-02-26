@@ -34,6 +34,78 @@
     return categoryKey === "now_live" ? "shipped_at" : "expected_date";
   }
 
+  function toIsoDate(year, month, day) {
+    const y = String(year).padStart(4, "0");
+    const m = String(month).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    return y + "-" + m + "-" + d;
+  }
+
+  function addDaysToIso(isoDate, days) {
+    if (!isoDate) return null;
+    const match = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return null;
+    const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+    date.setUTCDate(date.getUTCDate() + days);
+    return toIsoDate(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+  }
+
+  function getCurrentWeekStartSundayIso(timeZone) {
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "short"
+    }).formatToParts(now);
+    const getPart = (type) => parts.find((p) => p.type === type)?.value;
+    const weekdayIndex = {
+      Sun: 0,
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6
+    };
+    const year = Number(getPart("year"));
+    const month = Number(getPart("month"));
+    const day = Number(getPart("day"));
+    const weekday = getPart("weekday");
+    const todayIso = toIsoDate(year, month, day);
+    const diff = weekdayIndex[weekday] ?? 0;
+    return addDaysToIso(todayIso, -diff);
+  }
+
+  const CURRENT_WEEK_START_ISO = getCurrentWeekStartSundayIso("America/New_York");
+  const NEXT_WEEK_START_ISO = addDaysToIso(CURRENT_WEEK_START_ISO, 7);
+
+  function getStatusBadge(row, categoryKey) {
+    if (categoryKey === "now_live") {
+      return { text: "Shipped 🚀", className: "shipped-badge" };
+    }
+
+    if (categoryKey === "on_the_horizon") {
+      return { text: "Upcoming ⏭️", className: "upcoming-badge" };
+    }
+
+    const expected = row.expected_date;
+    if (!expected || typeof expected !== "string") return null;
+
+    if (!CURRENT_WEEK_START_ISO || !NEXT_WEEK_START_ISO) return null;
+
+    if (expected < CURRENT_WEEK_START_ISO) {
+      return { text: "Delayed ⚠️", className: "delayed-badge" };
+    }
+
+    if (expected < NEXT_WEEK_START_ISO) {
+      return { text: "This Week 📆", className: "this-week-badge" };
+    }
+
+    return null;
+  }
+
   function sortByCategoryDate(items, categoryKey) {
     const dateField = getDateFieldByCategory(categoryKey);
     const isDescending = categoryKey === "now_live";
@@ -169,11 +241,12 @@
 
       const headerRight = document.createElement("div");
       headerRight.className = "header-right";
-      if (categoryKey === "now_live") {
-        const shippedBadge = document.createElement("span");
-        shippedBadge.className = "shipped-badge";
-        shippedBadge.textContent = "Shipped 🚀";
-        headerRight.appendChild(shippedBadge);
+      const statusBadge = getStatusBadge(row, categoryKey);
+      if (statusBadge) {
+        const badge = document.createElement("span");
+        badge.className = statusBadge.className;
+        badge.textContent = statusBadge.text;
+        headerRight.appendChild(badge);
       }
       headerRight.appendChild(channel);
 
