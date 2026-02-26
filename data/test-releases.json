@@ -10,7 +10,8 @@
       "slack_channel": "#team-atlas",
       "feature_brief_url": "https://example.com/briefs/atlas-dashboard",
       "expected_date": "2026-02-24",
-      "has_shipped": true
+      "has_shipped": true,
+      "shipping_subtype": "ga"
     },
     {
       "release_id": "rel_1002",
@@ -20,7 +21,8 @@
       "slack_channel": "#team-nova",
       "feature_brief_url": null,
       "expected_date": "2026-02-25",
-      "has_shipped": true
+      "has_shipped": true,
+      "shipping_subtype": "beta"
     }
   ],
   "coming_soon": [

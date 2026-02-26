@@ -81,13 +81,23 @@
   const CURRENT_WEEK_START_ISO = getCurrentWeekStartSundayIso("America/New_York");
   const NEXT_WEEK_START_ISO = addDaysToIso(CURRENT_WEEK_START_ISO, 7);
 
-  function getStatusBadge(row, categoryKey) {
+    function getStatusBadge(row, categoryKey) {
     if (categoryKey === "now_live") {
-      return { text: "Shipped 🚀", className: "shipped-badge" };
+      const subtype = String(row.shipping_subtype || "").trim().toLowerCase();
+      if (subtype === "ga") {
+        return { text: "Now Live \u{1F680}", className: "badge-ga" };
+      }
+      if (subtype === "beta") {
+        return { text: "Beta \u{1F9EA}", className: "badge-beta" };
+      }
+      if (subtype === "rollout") {
+        return { text: "Rolling Out \u{1F30A}", className: "badge-rollout" };
+      }
+      return { text: "Shipped \u{1F4E6}", className: "shipped-badge" };
     }
 
     if (categoryKey === "on_the_horizon") {
-      return { text: "Upcoming 🌅", className: "upcoming-badge" };
+      return { text: "Upcoming \u{1F4C5}", className: "upcoming-badge" };
     }
 
     const expected = row.expected_date;
@@ -96,16 +106,15 @@
     if (!CURRENT_WEEK_START_ISO || !NEXT_WEEK_START_ISO) return null;
 
     if (expected < CURRENT_WEEK_START_ISO) {
-      return { text: "Delayed ⏱️", className: "delayed-badge" };
+      return { text: "Delayed \u{26A0}\u{FE0F}", className: "delayed-badge" };
     }
 
     if (expected < NEXT_WEEK_START_ISO) {
-      return { text: "This Week 📆", className: "this-week-badge" };
+      return { text: "This Week \u{1F4C6}", className: "this-week-badge" };
     }
 
     return null;
   }
-
   function sortByCategoryDate(items, categoryKey) {
     const dateField = getDateFieldByCategory(categoryKey);
     const isDescending = categoryKey === "now_live";

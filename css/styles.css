@@ -249,6 +249,30 @@ h1 {
   white-space: nowrap;
 }
 
+.badge-ga,
+.badge-beta,
+.badge-rollout {
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 0.2rem 0.52rem;
+  white-space: nowrap;
+}
+
+.badge-ga {
+  background: linear-gradient(130deg, #ff8a2f, #ff4d78 52%, #6f5bff);
+}
+
+.badge-beta {
+  background: linear-gradient(130deg, #2f6df5, #7b9bff);
+}
+
+.badge-rollout {
+  background: linear-gradient(130deg, #1a9d89, #4dd0bd);
+}
+
 .this-week-badge,
 .delayed-badge,
 .upcoming-badge {
