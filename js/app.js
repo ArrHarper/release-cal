@@ -355,7 +355,7 @@
         const linkIndicator = document.createElement("span");
         const hasReleaseRecord = toBoolean(row.has_release_record);
         linkIndicator.className = "link-indicator " + (hasReleaseRecord ? "link-indicator-linked" : "link-indicator-unlinked");
-        linkIndicator.textContent = hasReleaseRecord ? "\u{1F517}" : "\u26D3";
+        linkIndicator.textContent = hasReleaseRecord ? "\u{1F517}" : "\u2753";
         linkIndicator.title = hasReleaseRecord
           ? "Linked to a release enablement record"
           : "No linked release enablement record";
