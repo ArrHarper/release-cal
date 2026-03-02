@@ -7,6 +7,8 @@
   --tab-bg: #e7eeeb;
   --live-1: #3b9962;
   --live-2: #a8f3a2;
+  --pending-1: #b86a2f;
+  --pending-2: #e79b56;
   --soon-1: #1363b6;
   --soon-2: #79c6f2;
   --horizon-1: #cf6b1f;
@@ -77,7 +79,7 @@ h1 {
 .tabs {
   display: grid;
   gap: 0.55rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-bottom: 1rem;
 }
 
@@ -165,6 +167,10 @@ h1 {
 
 .panel-heading-live {
   background: linear-gradient(120deg, var(--live-1), var(--live-2));
+}
+
+.panel-heading-pending {
+  background: linear-gradient(120deg, var(--pending-1), var(--pending-2));
 }
 
 .panel-heading-soon {

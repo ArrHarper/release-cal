@@ -27,6 +27,10 @@
         aria-selected="true">
         Now Live
       </button>
+      <button id="pending" class="tab" data-tab="pending" aria-controls="panel-pending"
+        aria-selected="false">
+        Pending
+      </button>
       <button id="coming-soon" class="tab" data-tab="coming-soon" aria-controls="panel-coming-soon"
         aria-selected="false">
         Coming Soon
@@ -49,6 +53,14 @@
           <p class="panel-heading-caption">Shipped to customers</p>
         </div>
         <div class="cards" id="cards-now-live"></div>
+      </section>
+
+      <section id="panel-pending" class="tab-panel" role="tabpanel" aria-labelledby="pending">
+        <div class="panel-heading panel-heading-pending">
+          <h2>Pending</h2>
+          <p class="panel-heading-caption">Expected date has passed</p>
+        </div>
+        <div class="cards" id="cards-pending"></div>
       </section>
 
       <section id="panel-coming-soon" class="tab-panel" role="tabpanel" aria-labelledby="coming-soon">

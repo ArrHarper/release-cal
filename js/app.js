@@ -3,6 +3,7 @@
 
   const CATEGORY_MAP = {
     "now-live": "now_live",
+    "pending": "pending",
     "coming-soon": "coming_soon",
     "on-the-horizon": "on_the_horizon"
   };
@@ -141,6 +142,10 @@
       return { text: nowLiveStatus.badgeText, className: nowLiveStatus.badgeClassName };
     }
 
+    if (categoryKey === "pending") {
+      return { text: "Delayed \u{26A0}\u{FE0F}", className: "delayed-badge" };
+    }
+
     if (categoryKey === "on_the_horizon") {
       return { text: "Upcoming \u{1F4C5}", className: "upcoming-badge" };
     }
@@ -149,10 +154,6 @@
     if (!expected || typeof expected !== "string") return null;
 
     if (!CURRENT_WEEK_START_ISO || !NEXT_WEEK_START_ISO) return null;
-
-    if (expected < CURRENT_WEEK_START_ISO) {
-      return { text: "Delayed \u{26A0}\u{FE0F}", className: "delayed-badge" };
-    }
 
     if (expected < NEXT_WEEK_START_ISO) {
       return { text: "This Week \u{1F4C6}", className: "this-week-badge" };
@@ -440,10 +441,12 @@
       }
       const payload = await response.json();
       const nowLive = normalizeList(payload, "now_live");
+      const pending = normalizeList(payload, "pending");
       const comingSoon = normalizeList(payload, "coming_soon");
       const onTheHorizon = normalizeList(payload, "on_the_horizon");
 
       renderCards("cards-now-live", nowLive, "now_live");
+      renderCards("cards-pending", pending, "pending");
       renderCards("cards-coming-soon", comingSoon, "coming_soon");
       renderCards("cards-on-the-horizon", onTheHorizon, "on_the_horizon");
 
