@@ -232,6 +232,28 @@ h1 {
   margin: 0;
 }
 
+.card-title-tag {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-right: 0.2rem;
+}
+
+.title-tag-ga {
+  color: #c74b18;
+}
+
+.title-tag-beta {
+  color: #2f6df5;
+}
+
+.title-tag-rollout {
+  color: #1a9d89;
+}
+
+.title-tag-shipped {
+  color: #8a3768;
+}
+
 .header-right {
   align-items: center;
   display: flex;
@@ -349,6 +371,25 @@ h1 {
   font-size: 0.94rem;
   margin: 0;
   white-space: pre-wrap;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.45rem;
+}
+
+.link-indicator {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.link-indicator-linked {
+  color: #1e7d57;
+}
+
+.link-indicator-unlinked {
+  color: #b4473e;
 }
 
 .empty-state {

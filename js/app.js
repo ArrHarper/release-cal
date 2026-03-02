@@ -16,6 +16,16 @@
     brief: "No feature brief"
   };
 
+  function toBoolean(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value !== 0;
+    if (typeof value === "string") {
+      const normalizedValue = value.trim().toLowerCase();
+      return ["true", "t", "1", "yes", "y"].includes(normalizedValue);
+    }
+    return false;
+  }
+
   const tabButtons = Array.from(document.querySelectorAll(".tab"));
   const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
   const loadingState = document.getElementById("loading-state");
@@ -81,19 +91,44 @@
   const CURRENT_WEEK_START_ISO = getCurrentWeekStartSundayIso("America/New_York");
   const NEXT_WEEK_START_ISO = addDaysToIso(CURRENT_WEEK_START_ISO, 7);
 
-    function getStatusBadge(row, categoryKey) {
+  function getNowLiveStatus(row) {
+    const subtype = String(row.shipping_subtype || "").trim().toLowerCase();
+    if (subtype === "ga") {
+      return {
+        label: "Now Live",
+        badgeText: "Now Live \u{1F680}",
+        badgeClassName: "badge-ga",
+        titleTagClassName: "title-tag-ga"
+      };
+    }
+    if (subtype === "beta") {
+      return {
+        label: "Beta",
+        badgeText: "Beta \u{1F9EA}",
+        badgeClassName: "badge-beta",
+        titleTagClassName: "title-tag-beta"
+      };
+    }
+    if (subtype === "rollout") {
+      return {
+        label: "Rolling Out",
+        badgeText: "Rolling Out \u{1F30A}",
+        badgeClassName: "badge-rollout",
+        titleTagClassName: "title-tag-rollout"
+      };
+    }
+    return {
+      label: "Shipped",
+      badgeText: "Shipped \u{1F4E6}",
+      badgeClassName: "shipped-badge",
+      titleTagClassName: "title-tag-shipped"
+    };
+  }
+
+  function getStatusBadge(row, categoryKey) {
     if (categoryKey === "now_live") {
-      const subtype = String(row.shipping_subtype || "").trim().toLowerCase();
-      if (subtype === "ga") {
-        return { text: "Now Live \u{1F680}", className: "badge-ga" };
-      }
-      if (subtype === "beta") {
-        return { text: "Beta \u{1F9EA}", className: "badge-beta" };
-      }
-      if (subtype === "rollout") {
-        return { text: "Rolling Out \u{1F30A}", className: "badge-rollout" };
-      }
-      return { text: "Shipped \u{1F4E6}", className: "shipped-badge" };
+      const nowLiveStatus = getNowLiveStatus(row);
+      return { text: nowLiveStatus.badgeText, className: nowLiveStatus.badgeClassName };
     }
 
     if (categoryKey === "on_the_horizon") {
@@ -240,7 +275,16 @@
 
       const title = document.createElement("h3");
       title.className = "card-title";
-      title.textContent = row.title || PLACEHOLDERS.title;
+      if (categoryKey === "now_live") {
+        const nowLiveStatus = getNowLiveStatus(row);
+        const titleTag = document.createElement("span");
+        titleTag.className = "card-title-tag " + nowLiveStatus.titleTagClassName;
+        titleTag.textContent = "[" + nowLiveStatus.label + "]";
+        title.appendChild(titleTag);
+        title.append(document.createTextNode(" " + (row.title || PLACEHOLDERS.title)));
+      } else {
+        title.textContent = row.title || PLACEHOLDERS.title;
+      }
 
       const channel = document.createElement("span");
       channel.className = "channel";
@@ -294,6 +338,21 @@
       description.textContent = row.description || PLACEHOLDERS.description;
 
       card.append(header, metaRow, brief, description);
+      if (categoryKey === "now_live") {
+        const cardFooter = document.createElement("div");
+        cardFooter.className = "card-footer";
+
+        const linkIndicator = document.createElement("span");
+        const hasReleaseRecord = toBoolean(row.has_release_record);
+        linkIndicator.className = "link-indicator " + (hasReleaseRecord ? "link-indicator-linked" : "link-indicator-unlinked");
+        linkIndicator.textContent = hasReleaseRecord ? "\u{1F517}" : "\u26D3";
+        linkIndicator.title = hasReleaseRecord
+          ? "Linked to a release enablement record"
+          : "No linked release enablement record";
+        linkIndicator.setAttribute("aria-label", linkIndicator.title);
+        cardFooter.appendChild(linkIndicator);
+        card.appendChild(cardFooter);
+      }
       container.appendChild(card);
     });
   }
