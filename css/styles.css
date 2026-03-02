@@ -239,7 +239,11 @@ h1 {
 }
 
 .title-tag-ga {
-  color: #c74b18;
+  color: #1e7d57;
+}
+
+.title-tag-wadmin {
+  color: #9a6a00;
 }
 
 .title-tag-beta {
@@ -272,6 +276,7 @@ h1 {
 }
 
 .badge-ga,
+.badge-wadmin,
 .badge-beta,
 .badge-rollout {
   border-radius: 999px;
@@ -284,7 +289,11 @@ h1 {
 }
 
 .badge-ga {
-  background: linear-gradient(130deg, #ff8a2f, #ff4d78 52%, #6f5bff);
+  background: linear-gradient(130deg, #1f8b60, #37b67a);
+}
+
+.badge-wadmin {
+  background: linear-gradient(130deg, #b98a16, #e2b546);
 }
 
 .badge-beta {

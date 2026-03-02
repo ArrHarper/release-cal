@@ -92,6 +92,16 @@
   const NEXT_WEEK_START_ISO = addDaysToIso(CURRENT_WEEK_START_ISO, 7);
 
   function getNowLiveStatus(row) {
+    const releaseSubtype = String(row.release_subtype || "").trim().toLowerCase();
+    if (releaseSubtype === "wadmin") {
+      return {
+        label: "Wadmin",
+        badgeText: "Wadmin",
+        badgeClassName: "badge-wadmin",
+        titleTagClassName: "title-tag-wadmin"
+      };
+    }
+
     const subtype = String(row.shipping_subtype || "").trim().toLowerCase();
     if (subtype === "ga") {
       return {
