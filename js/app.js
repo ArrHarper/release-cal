@@ -334,17 +334,23 @@
       return s;
     }
 
-    // Converts bare https:// URLs in an already-escaped text segment to <a> tags.
+    // Converts Markdown links [text](url) and bare https:// URLs in an
+    // already-escaped text segment to <a> tags.
     function linkifySegment(segment) {
-      const urlRe = /https?:\/\/[^\s<>"')\]]+/g;
+      const linkRe = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|https?:\/\/[^\s<>"')\]]+/g;
       let result = "";
       let last = 0;
       let m;
-      while ((m = urlRe.exec(segment)) !== null) {
+      while ((m = linkRe.exec(segment)) !== null) {
         result += applyInline(segment.slice(last, m.index));
-        const url = m[0];
-        result += `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-        last = m.index + url.length;
+        if (m[1] != null) {
+          // Markdown link: [link text](url)
+          result += `<a href="${m[2]}" target="_blank" rel="noopener noreferrer">${applyInline(m[1])}</a>`;
+        } else {
+          // Bare https:// URL
+          result += `<a href="${m[0]}" target="_blank" rel="noopener noreferrer">${m[0]}</a>`;
+        }
+        last = m.index + m[0].length;
       }
       result += applyInline(segment.slice(last));
       return result;
