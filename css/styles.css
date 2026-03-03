@@ -656,7 +656,7 @@ main {
   flex: 1;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 2rem 2.5rem;
+  padding: 2rem 4.5rem;
 }
 
 .slide-card {
@@ -709,18 +709,6 @@ main {
   line-height: 1.5;
   margin: 0.5rem 0 0;
   overflow: hidden;
-}
-
-.slide-card .slide-card-brief {
-  grid-column: 1 / -1;
-  margin-top: 0.5rem;
-}
-
-.slide-card .slide-card-brief a {
-  color: #0c5e9e;
-  font-size: 1rem;
-  font-weight: 700;
-  text-decoration: none;
 }
 
 /* Presentation nav */

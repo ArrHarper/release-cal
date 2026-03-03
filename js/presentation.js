@@ -8,10 +8,10 @@ const SLIDE_WIDTH = 1920;
 const SLIDE_HEIGHT = 1080;
 
 const CATEGORY_CONFIG = {
-  now_live: { label: "Now Live", headerClass: "now-live" },
-  pending: { label: "Pending", headerClass: "pending" },
-  coming_soon: { label: "Coming Soon", headerClass: "coming-soon" },
-  on_the_horizon: { label: "On the Horizon", headerClass: "on-the-horizon" }
+  now_live: { label: "🚀 Now Live", headerClass: "now-live" },
+  pending: { label: "⌛ Pending", headerClass: "pending" },
+  coming_soon: { label: "⏱️ Coming Soon", headerClass: "coming-soon" },
+  on_the_horizon: { label: "🌅 On the Horizon", headerClass: "on-the-horizon" }
 };
 
 const PRESENTATION_CATEGORY_ORDER = ["now_live", "pending", "coming_soon", "on_the_horizon"];
@@ -85,18 +85,6 @@ function renderSlideToDOM(slide) {
       desc.className = "slide-card-description";
       desc.textContent = card.description;
       cardEl.appendChild(desc);
-    }
-
-    if (card.feature_brief_url) {
-      const brief = document.createElement("div");
-      brief.className = "slide-card-brief";
-      const link = document.createElement("a");
-      link.href = card.feature_brief_url;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.textContent = "Feature Brief";
-      brief.appendChild(link);
-      cardEl.appendChild(brief);
     }
 
     cardsContainer.appendChild(cardEl);
