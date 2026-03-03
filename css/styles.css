@@ -395,7 +395,15 @@ h1 {
   color: #314349;
   font-size: 0.94rem;
   margin: 0;
-  white-space: pre-wrap;
+}
+
+.description ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.description li {
+  margin-bottom: 0.15rem;
 }
 
 .card-footer {

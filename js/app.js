@@ -299,6 +299,88 @@
   }
 
   /* -----------------------------------------------------------
+     Slack markdown → HTML
+     ----------------------------------------------------------- */
+  function slackMarkdownToHtml(text) {
+    if (!text) return "";
+
+    // Strip metadata bullet section that starts with the external release date bullet.
+    // Handles both • (U+2022) and * used as a Slack list marker.
+    text = text
+      .replace(/\n\s*(?:[\u2022]|\*)\s*\*?External release date:[\s\S]*$/, "")
+      .trim();
+
+    // Process line by line to handle bullet lists correctly.
+    const lines = text.split("\n");
+    const output = [];
+    let inList = false;
+
+    function escHtml(s) {
+      return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function applyInline(s) {
+      // Bold: *text* — must not be a list marker (no space after opening *)
+      s = s.replace(/\*([^*\n]+?)\*/g, "<strong>$1</strong>");
+      // Italic: _text_
+      s = s.replace(/_([^_\n]+?)_/g, "<em>$1</em>");
+      // Strikethrough: ~text~
+      s = s.replace(/~([^~\n]+?)~/g, "<del>$1</del>");
+      // Inline code: `text`
+      s = s.replace(/`([^`\n]+?)`/g, "<code>$1</code>");
+      return s;
+    }
+
+    for (const line of lines) {
+      // Detect bullet lines: starts with • or "* " (asterisk + space)
+      const bulletMatch = line.match(/^(?:[\u2022]|\*)\s(.+)/);
+      if (bulletMatch) {
+        if (!inList) {
+          output.push("<ul>");
+          inList = true;
+        }
+        output.push("<li>" + applyInline(escHtml(bulletMatch[1])) + "</li>");
+      } else {
+        if (inList) {
+          output.push("</ul>");
+          inList = false;
+        }
+        output.push(applyInline(escHtml(line)));
+      }
+    }
+
+    if (inList) output.push("</ul>");
+
+    // Join lines: blank lines become paragraph breaks, others become <br>
+    let html = "";
+    let i = 0;
+    while (i < output.length) {
+      const chunk = output[i];
+      if (chunk === "") {
+        // Collapse consecutive blank lines into one break
+        while (i + 1 < output.length && output[i + 1] === "") i++;
+        html += "<br>";
+      } else if (chunk.startsWith("<ul>") || chunk.startsWith("</ul>") ||
+                 chunk.startsWith("<li>")) {
+        html += chunk;
+      } else {
+        html += chunk;
+        if (i + 1 < output.length && output[i + 1] !== "" &&
+            !output[i + 1].startsWith("<ul>") && !output[i + 1].startsWith("</ul>") &&
+            !output[i + 1].startsWith("<li>")) {
+          html += "<br>";
+        }
+      }
+      i++;
+    }
+
+    return html;
+  }
+
+  /* -----------------------------------------------------------
      Rendering
      ----------------------------------------------------------- */
   function setStatusVisibility(isLoading, errorMessage) {
@@ -451,7 +533,7 @@
 
       const description = document.createElement("p");
       description.className = "description";
-      description.textContent = row.description || PLACEHOLDERS.description;
+      description.innerHTML = slackMarkdownToHtml(row.description || PLACEHOLDERS.description);
 
       card.append(header, metaRow, brief, description);
       if (categoryKey === "now_live") {
