@@ -1,73 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
   <title>Release Tracker</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Public+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-  <header class="site-header">
-    <h1>Release Tracker</h1>
-    <div class="header-actions">
-      <button type="button" id="selection-mode-toggle" class="btn btn-secondary">Selection Mode</button>
-    </div>
-  </header>
+  <div class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">Wistia Weekly Product Update</p>
+      <h1>Release Tracker</h1>
+      <div class="header-row">
+        <p id="last-updated" class="last-updated">Loading latest release feed...</p>
+        <button type="button" id="selection-mode-toggle" class="btn-selection-toggle">Selection Mode</button>
+      </div>
+    </header>
 
-  <nav class="tab-nav" role="tablist">
-    <button type="button" class="tab-btn active" data-tab="now-live" role="tab">Now Live</button>
-    <button type="button" class="tab-btn" data-tab="pending" role="tab">Pending</button>
-    <button type="button" class="tab-btn" data-tab="coming-soon" role="tab">Coming Soon</button>
-    <button type="button" class="tab-btn" data-tab="on-the-horizon" role="tab">On the Horizon</button>
-  </nav>
+    <nav class="tabs" aria-label="Release categories">
+      <button id="now-live" class="tab is-active" data-tab="now-live" aria-controls="panel-now-live"
+        aria-selected="true">
+        Now Live
+      </button>
+      <button id="pending" class="tab" data-tab="pending" aria-controls="panel-pending"
+        aria-selected="false">
+        Pending
+      </button>
+      <button id="coming-soon" class="tab" data-tab="coming-soon" aria-controls="panel-coming-soon"
+        aria-selected="false">
+        Coming Soon
+      </button>
+      <button id="on-the-horizon" class="tab" data-tab="on-the-horizon" aria-controls="panel-on-the-horizon"
+        aria-selected="false">
+        On the Horizon
+      </button>
+    </nav>
 
-  <main class="main-content">
-    <div id="loading" class="loading">Loading releases…</div>
-    <div id="error" class="error" hidden></div>
+    <main>
+      <section class="status status-loading" id="loading-state" aria-live="polite">
+        Fetching release updates...
+      </section>
+      <section class="status status-error is-hidden" id="error-state" aria-live="assertive"></section>
 
-    <section id="tab-now-live" class="tab-panel active" data-category="now_live" role="tabpanel">
-      <div class="card-list" id="cards-now-live"></div>
-    </section>
-    <section id="tab-pending" class="tab-panel" data-category="pending" role="tabpanel">
-      <div class="card-list" id="cards-pending"></div>
-    </section>
-    <section id="tab-coming-soon" class="tab-panel" data-category="coming_soon" role="tabpanel">
-      <div class="card-list" id="cards-coming-soon"></div>
-    </section>
-    <section id="tab-on-the-horizon" class="tab-panel" data-category="on_the_horizon" role="tabpanel">
-      <div class="card-list" id="cards-on-the-horizon"></div>
-    </section>
-  </main>
+      <section id="panel-now-live" class="tab-panel is-active" role="tabpanel" aria-labelledby="now-live">
+        <div class="panel-heading panel-heading-live">
+          <h2>Now Live</h2>
+          <p class="panel-heading-caption">Shipped to customers</p>
+        </div>
+        <div class="cards" id="cards-now-live"></div>
+      </section>
 
-  <div id="selection-bar" class="selection-bar" hidden>
+      <section id="panel-pending" class="tab-panel" role="tabpanel" aria-labelledby="pending">
+        <div class="panel-heading panel-heading-pending">
+          <h2>Pending</h2>
+          <p class="panel-heading-caption">Expected date has passed</p>
+        </div>
+        <div class="cards" id="cards-pending"></div>
+      </section>
+
+      <section id="panel-coming-soon" class="tab-panel" role="tabpanel" aria-labelledby="coming-soon">
+        <div class="panel-heading panel-heading-soon">
+          <h2>Coming Soon</h2>
+          <p class="panel-heading-caption">Next 1-2 weeks</p>
+        </div>
+        <div class="cards" id="cards-coming-soon"></div>
+      </section>
+
+      <section id="panel-on-the-horizon" class="tab-panel" role="tabpanel" aria-labelledby="on-the-horizon">
+        <div class="panel-heading panel-heading-horizon">
+          <h2>On the Horizon</h2>
+          <p class="panel-heading-caption">2+ weeks away</p>
+        </div>
+        <div class="cards" id="cards-on-the-horizon"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="selection-bar" class="selection-bar is-hidden">
     <span class="selection-count" id="selection-count">0 cards selected</span>
     <div class="selection-actions">
-      <button type="button" id="clear-selection" class="btn btn-secondary">Clear Selection</button>
-      <button type="button" id="open-presentation" class="btn btn-primary" disabled>Open Presentation</button>
+      <button type="button" id="clear-selection" class="btn-selection-action">Clear Selection</button>
+      <button type="button" id="open-presentation" class="btn-selection-action btn-selection-primary" disabled>Open Presentation</button>
     </div>
   </div>
 
   <div id="presentation-slides-offscreen" style="position:absolute;left:-9999px;top:0;overflow:visible;pointer-events:none;" aria-hidden="true"></div>
 
-  <div id="presentation-overlay" class="presentation-overlay" hidden>
+  <div id="presentation-overlay" class="presentation-overlay is-hidden">
     <div class="presentation-viewport">
       <div class="presentation-slide-container" id="presentation-slide-container"></div>
     </div>
     <div class="presentation-nav">
-      <button type="button" id="slide-prev" class="btn btn-nav" aria-label="Previous slide">&larr;</button>
+      <button type="button" id="slide-prev" class="btn-slide-nav" aria-label="Previous slide">&larr;</button>
       <span class="slide-counter" id="slide-counter">1 / 1</span>
-      <button type="button" id="slide-next" class="btn btn-nav" aria-label="Next slide">&rarr;</button>
-      <button type="button" id="close-presentation" class="btn btn-secondary">Close</button>
+      <button type="button" id="slide-next" class="btn-slide-nav" aria-label="Next slide">&rarr;</button>
+      <button type="button" id="close-presentation" class="btn-selection-action">Close</button>
     </div>
     <div class="presentation-export">
-      <button type="button" id="export-current-slide" class="btn btn-secondary">Download Current Slide</button>
-      <button type="button" id="export-all-slides" class="btn btn-secondary">Download All as Zip</button>
+      <button type="button" id="export-current-slide" class="btn-selection-action">Download Current Slide</button>
+      <button type="button" id="export-all-slides" class="btn-selection-action">Download All as Zip</button>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
   <script src="js/presentation.js"></script>
 </body>
+
 </html>

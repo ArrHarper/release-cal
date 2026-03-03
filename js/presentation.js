@@ -1,5 +1,6 @@
 /**
  * Presentation Mode — slide generation, viewer, and PNG export.
+ * Works with the original app.js IIFE which exposes getSelectedReleasesByCategory on window.
  */
 
 const CARDS_PER_SLIDE = 3;
@@ -13,11 +14,11 @@ const CATEGORY_CONFIG = {
   on_the_horizon: { label: "On the Horizon", headerClass: "on-the-horizon" }
 };
 
-const CATEGORY_ORDER = ["now_live", "pending", "coming_soon", "on_the_horizon"];
+const PRESENTATION_CATEGORY_ORDER = ["now_live", "pending", "coming_soon", "on_the_horizon"];
 
 function generateSlides(selectedByCategory) {
   const slides = [];
-  for (const categoryKey of CATEGORY_ORDER) {
+  for (const categoryKey of PRESENTATION_CATEGORY_ORDER) {
     const cards = selectedByCategory[categoryKey];
     if (!cards || cards.length === 0) continue;
 
@@ -114,8 +115,10 @@ function getSlideFilename(slideIndex) {
   const slide = slideElements[slideIndex];
   if (!slide) return `release-update-${slideIndex + 1}.png`;
   const header = slide.querySelector(".slide-header");
-  const label = header ? header.textContent.replace(/\s*\(cont\.\)\s*/, "").toLowerCase().replace(/\s+/g, "-") : "slide";
-  const categorySlug = label.replace(/[^a-z0-9-]/g, "");
+  const rawLabel = header
+    ? header.textContent.replace(/\s*\(cont\.\)\s*/, "").trim().toLowerCase().replace(/\s+/g, "-")
+    : "slide";
+  const categorySlug = rawLabel.replace(/[^a-z0-9-]/g, "");
   return `release-update-${categorySlug}-${slideIndex + 1}.png`;
 }
 
@@ -128,8 +131,8 @@ function updateSlideView() {
     container.appendChild(current.cloneNode(true));
   }
 
-  const counter = document.getElementById("slide-counter");
-  counter.textContent = `${currentSlideIndex + 1} / ${slideElements.length}`;
+  document.getElementById("slide-counter").textContent =
+    `${currentSlideIndex + 1} / ${slideElements.length}`;
 
   const scale = Math.min(
     viewport.clientWidth / SLIDE_WIDTH,
@@ -140,27 +143,23 @@ function updateSlideView() {
 
 function handleKeydown(e) {
   if (e.key === "Escape") {
-    closePresentation();
+    closePresentationOverlay();
     return;
   }
-  if (e.key === "ArrowLeft") {
-    if (currentSlideIndex > 0) {
-      currentSlideIndex--;
-      updateSlideView();
-    }
+  if (e.key === "ArrowLeft" && currentSlideIndex > 0) {
+    currentSlideIndex--;
+    updateSlideView();
     return;
   }
-  if (e.key === "ArrowRight") {
-    if (currentSlideIndex < slideElements.length - 1) {
-      currentSlideIndex++;
-      updateSlideView();
-    }
+  if (e.key === "ArrowRight" && currentSlideIndex < slideElements.length - 1) {
+    currentSlideIndex++;
+    updateSlideView();
   }
 }
 
-function closePresentation() {
+function closePresentationOverlay() {
   const overlay = document.getElementById("presentation-overlay");
-  overlay.hidden = true;
+  overlay.classList.add("is-hidden");
   if (keyHandler) {
     document.removeEventListener("keydown", keyHandler);
     keyHandler = null;
@@ -182,15 +181,10 @@ function openPresentation(selectedByCategory) {
   currentSlideIndex = 0;
 
   const overlay = document.getElementById("presentation-overlay");
-  overlay.hidden = false;
+  overlay.classList.remove("is-hidden");
 
   const container = document.getElementById("presentation-slide-container");
   const viewport = container.closest(".presentation-viewport");
-  const scale = Math.min(
-    viewport.clientWidth / SLIDE_WIDTH,
-    viewport.clientHeight / SLIDE_HEIGHT
-  );
-  container.style.transform = `scale(${scale})`;
   container.style.width = `${SLIDE_WIDTH}px`;
   container.style.height = `${SLIDE_HEIGHT}px`;
 
@@ -213,7 +207,7 @@ function openPresentation(selectedByCategory) {
     }
   };
 
-  document.getElementById("close-presentation").onclick = closePresentation;
+  document.getElementById("close-presentation").onclick = closePresentationOverlay;
 
   document.getElementById("export-current-slide").onclick = () => {
     const el = slideElements[currentSlideIndex];
