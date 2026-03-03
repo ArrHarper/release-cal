@@ -334,6 +334,41 @@
       return s;
     }
 
+    // Converts bare https:// URLs in an already-escaped text segment to <a> tags.
+    function linkifySegment(segment) {
+      const urlRe = /https?:\/\/[^\s<>"')\]]+/g;
+      let result = "";
+      let last = 0;
+      let m;
+      while ((m = urlRe.exec(segment)) !== null) {
+        result += applyInline(segment.slice(last, m.index));
+        const url = m[0];
+        result += `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        last = m.index + url.length;
+      }
+      result += applyInline(segment.slice(last));
+      return result;
+    }
+
+    // Formats a line of text, handling links before HTML-escaping.
+    // Supports Slack link syntax <https://url|text> and <https://url>,
+    // then falls through to linkifySegment for bare URLs in remaining text.
+    function formatLine(line) {
+      const slackLinkRe = /<(https?:\/\/[^>|]+)(?:\|([^>]*))?>/g;
+      let result = "";
+      let last = 0;
+      let m;
+      while ((m = slackLinkRe.exec(line)) !== null) {
+        result += linkifySegment(escHtml(line.slice(last, m.index)));
+        const url = escHtml(m[1]);
+        const linkText = applyInline(escHtml(m[2] != null ? m[2] : m[1]));
+        result += `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+        last = m.index + m[0].length;
+      }
+      result += linkifySegment(escHtml(line.slice(last)));
+      return result;
+    }
+
     for (const line of lines) {
       // Detect bullet lines: starts with • or "* " (asterisk + space)
       const bulletMatch = line.match(/^(?:[\u2022]|\*)\s(.+)/);
@@ -342,13 +377,13 @@
           output.push("<ul>");
           inList = true;
         }
-        output.push("<li>" + applyInline(escHtml(bulletMatch[1])) + "</li>");
+        output.push("<li>" + formatLine(bulletMatch[1]) + "</li>");
       } else {
         if (inList) {
           output.push("</ul>");
           inList = false;
         }
-        output.push(applyInline(escHtml(line)));
+        output.push(formatLine(line));
       }
     }
 
