@@ -1,5 +1,5 @@
 /**
- * Presentation Mode — slide generation, viewer, and PNG export.
+ * Presentation Mode - slide generation, viewer, and PNG export.
  * Works with the original app.js IIFE which exposes getSelectedReleasesByCategory on window.
  */
 
@@ -15,6 +15,99 @@ const CATEGORY_CONFIG = {
 };
 
 const PRESENTATION_CATEGORY_ORDER = ["now_live", "pending", "coming_soon", "on_the_horizon"];
+const CHANNEL_PLACEHOLDER = "Channel not provided";
+const PLANS_PLACEHOLDER = "Plans not specified";
+const DATE_PLACEHOLDER = "Date TBD";
+
+function parseIsoDate(isoDate) {
+  if (!isoDate || typeof isoDate !== "string") return null;
+  const match = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatDateLabel(isoDate) {
+  const date = parseIsoDate(isoDate);
+  if (!date) return DATE_PLACEHOLDER;
+  return date.toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+function getCategoryBadgeLabel(categoryKey) {
+  if (categoryKey === "now_live") return "Now Live";
+  if (categoryKey === "pending") return "Pending";
+  if (categoryKey === "coming_soon") return "Coming Soon";
+  if (categoryKey === "on_the_horizon") return "On the Horizon";
+  return "Release";
+}
+
+function getNormalizedChannel(channelValue) {
+  const text = String(channelValue || "").trim();
+  if (!text) {
+    return { text: CHANNEL_PLACEHOLDER, isMissing: true };
+  }
+  const isMissing = text.toLowerCase() === CHANNEL_PLACEHOLDER.toLowerCase();
+  return { text, isMissing };
+}
+
+function normalizePlans(plansValue) {
+  const raw = String(plansValue || "").trim();
+  if (!raw) return { allPlans: false, items: [] };
+
+  if (/\ball plans\b/i.test(raw)) {
+    return { allPlans: true, items: ["All plans"] };
+  }
+
+  const items = raw
+    .split(/[;,|/]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return {
+    allPlans: false,
+    items: items.length > 0 ? items : [raw]
+  };
+}
+
+function appendPlans(cardEl, plansValue) {
+  const normalized = normalizePlans(plansValue);
+
+  if (normalized.allPlans) {
+    const plans = document.createElement("p");
+    plans.className = "slide-card-plans";
+    plans.textContent = normalized.items[0];
+    cardEl.appendChild(plans);
+    return;
+  }
+
+  if (normalized.items.length === 0) {
+    const plans = document.createElement("p");
+    plans.className = "slide-card-plans";
+    plans.textContent = PLANS_PLACEHOLDER;
+    cardEl.appendChild(plans);
+    return;
+  }
+
+  const plansLabel = document.createElement("p");
+  plansLabel.className = "slide-card-plans-label";
+  plansLabel.textContent = "Plans:";
+  cardEl.appendChild(plansLabel);
+
+  const plansList = document.createElement("ul");
+  plansList.className = "slide-card-plans-list";
+  normalized.items.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "slide-card-plans-item";
+    li.textContent = item;
+    plansList.appendChild(li);
+  });
+  cardEl.appendChild(plansList);
+}
 
 function generateSlides(selectedByCategory) {
   const slides = [];
@@ -61,24 +154,40 @@ function renderSlideToDOM(slide) {
     const cardEl = document.createElement("div");
     cardEl.className = "slide-card";
 
+    const cardHeader = document.createElement("div");
+    cardHeader.className = "slide-card-header";
+
     const title = document.createElement("h3");
     title.className = "slide-card-title";
     title.textContent = card.title || "Untitled";
-    cardEl.appendChild(title);
+    cardHeader.appendChild(title);
 
-    if (card.slack_channel) {
-      const channel = document.createElement("span");
-      channel.className = "slide-card-channel";
-      channel.textContent = card.slack_channel;
-      cardEl.appendChild(channel);
-    }
+    const badgeRow = document.createElement("div");
+    badgeRow.className = "slide-card-badge-row";
 
-    if (card.plans) {
-      const plans = document.createElement("p");
-      plans.className = "slide-card-plans";
-      plans.textContent = card.plans;
-      cardEl.appendChild(plans);
+    const statusBadge = document.createElement("span");
+    statusBadge.className = `slide-card-status-badge ${slide.headerClass}`;
+    statusBadge.textContent = getCategoryBadgeLabel(slide.category);
+    badgeRow.appendChild(statusBadge);
+
+    const channel = document.createElement("span");
+    const normalizedChannel = getNormalizedChannel(card.slack_channel);
+    channel.className = "slide-card-channel";
+    if (normalizedChannel.isMissing) {
+      channel.classList.add("is-missing");
     }
+    channel.textContent = normalizedChannel.text;
+    badgeRow.appendChild(channel);
+
+    cardHeader.appendChild(badgeRow);
+    cardEl.appendChild(cardHeader);
+
+    appendPlans(cardEl, card.plans);
+
+    const shippedAt = document.createElement("p");
+    shippedAt.className = "slide-card-date";
+    shippedAt.textContent = "Shipped: " + formatDateLabel(card.shipped_at || card.expected_date);
+    cardEl.appendChild(shippedAt);
 
     if (card.description) {
       const desc = document.createElement("p");

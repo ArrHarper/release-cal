@@ -671,40 +671,112 @@ main {
   background: #f4f7f3;
   border-left: 5px solid var(--border);
   border-radius: 10px;
-  display: grid;
-  gap: 0.25rem 1.5rem;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
   padding: 1.25rem 1.5rem;
+}
+
+.slide-card .slide-card-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
 }
 
 .slide-card .slide-card-title {
   color: #152f46;
   font-size: 1.75rem;
   font-weight: 700;
-  grid-column: 1;
+  line-height: 1.2;
   margin: 0;
 }
 
+.slide-card .slide-card-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.slide-card .slide-card-status-badge {
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  padding: 0.25rem 0.68rem;
+  white-space: nowrap;
+}
+
+.slide-card .slide-card-status-badge.now-live {
+  background: linear-gradient(130deg, #1f8b60, #37b67a);
+}
+
+.slide-card .slide-card-status-badge.pending {
+  background: linear-gradient(130deg, #bf3d2e, #ef7e56);
+}
+
+.slide-card .slide-card-status-badge.coming-soon {
+  background: linear-gradient(130deg, #19766f, #2ea8a0);
+}
+
+.slide-card .slide-card-status-badge.on-the-horizon {
+  background: linear-gradient(130deg, #415fa8, #6fa0f4);
+}
+
 .slide-card .slide-card-channel {
-  align-self: start;
   border: 1px solid #d6e1e8;
   border-radius: 999px;
   color: #496272;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  grid-column: 2;
-  grid-row: 1 / 4;
+  line-height: 1.2;
   padding: 0.25rem 0.65rem;
   white-space: nowrap;
+}
+
+.slide-card .slide-card-channel.is-missing {
+  border-style: dashed;
+  opacity: 0.9;
 }
 
 .slide-card .slide-card-plans {
   color: #0f603e;
   font-size: 1.25rem;
   font-weight: 700;
-  grid-column: 1;
-  margin: 0.25rem 0 0;
+  margin: 0;
+}
+
+.slide-card .slide-card-plans-label {
+  color: #0f603e;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.slide-card .slide-card-plans-list {
+  color: #0f603e;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.1rem;
+  font-weight: 700;
+  gap: 0.2rem 1.4rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.slide-card .slide-card-plans-item {
+  margin: 0;
+}
+
+.slide-card .slide-card-date {
+  color: #345160;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
 }
 
 .slide-card .slide-card-description {
@@ -713,9 +785,8 @@ main {
   color: #314349;
   display: -webkit-box;
   font-size: 1.125rem;
-  grid-column: 1 / -1;
   line-height: 1.5;
-  margin: 0.5rem 0 0;
+  margin: 0.2rem 0 0;
   overflow: hidden;
 }
 
