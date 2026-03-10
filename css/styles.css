@@ -750,28 +750,6 @@ main {
   margin: 0;
 }
 
-.slide-card .slide-card-plans-label {
-  color: #0f603e;
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin: 0;
-}
-
-.slide-card .slide-card-plans-list {
-  color: #0f603e;
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 1.1rem;
-  font-weight: 700;
-  gap: 0.2rem 1.4rem;
-  margin: 0;
-  padding-left: 1.25rem;
-}
-
-.slide-card .slide-card-plans-item {
-  margin: 0;
-}
-
 .slide-card .slide-card-date {
   color: #345160;
   font-size: 1.05rem;

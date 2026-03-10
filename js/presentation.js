@@ -46,6 +46,19 @@ function getCategoryBadgeLabel(categoryKey) {
   return "Release";
 }
 
+function getCardDateLabelAndValue(card, categoryKey) {
+  if (categoryKey === "now_live") {
+    return {
+      label: "Shipped",
+      value: card.shipped_at || card.expected_date
+    };
+  }
+  return {
+    label: "Expected",
+    value: card.expected_date || card.shipped_at
+  };
+}
+
 function getNormalizedChannel(channelValue) {
   const text = String(channelValue || "").trim();
   if (!text) {
@@ -77,36 +90,18 @@ function normalizePlans(plansValue) {
 function appendPlans(cardEl, plansValue) {
   const normalized = normalizePlans(plansValue);
 
+  const plans = document.createElement("p");
+  plans.className = "slide-card-plans";
+
   if (normalized.allPlans) {
-    const plans = document.createElement("p");
-    plans.className = "slide-card-plans";
     plans.textContent = normalized.items[0];
-    cardEl.appendChild(plans);
-    return;
-  }
-
-  if (normalized.items.length === 0) {
-    const plans = document.createElement("p");
-    plans.className = "slide-card-plans";
+  } else if (normalized.items.length === 0) {
     plans.textContent = PLANS_PLACEHOLDER;
-    cardEl.appendChild(plans);
-    return;
+  } else {
+    plans.textContent = normalized.items.join(", ");
   }
 
-  const plansLabel = document.createElement("p");
-  plansLabel.className = "slide-card-plans-label";
-  plansLabel.textContent = "Plans:";
-  cardEl.appendChild(plansLabel);
-
-  const plansList = document.createElement("ul");
-  plansList.className = "slide-card-plans-list";
-  normalized.items.forEach((item) => {
-    const li = document.createElement("li");
-    li.className = "slide-card-plans-item";
-    li.textContent = item;
-    plansList.appendChild(li);
-  });
-  cardEl.appendChild(plansList);
+  cardEl.appendChild(plans);
 }
 
 function generateSlides(selectedByCategory) {
@@ -184,9 +179,10 @@ function renderSlideToDOM(slide) {
 
     appendPlans(cardEl, card.plans);
 
+    const cardDate = getCardDateLabelAndValue(card, slide.category);
     const shippedAt = document.createElement("p");
     shippedAt.className = "slide-card-date";
-    shippedAt.textContent = "Shipped: " + formatDateLabel(card.shipped_at || card.expected_date);
+    shippedAt.textContent = cardDate.label + ": " + formatDateLabel(cardDate.value);
     cardEl.appendChild(shippedAt);
 
     if (card.description) {
